@@ -23,6 +23,7 @@ interface CodePanelProps {
     key: keyof PluginSettings,
     value: boolean | string | number,
   ) => void;
+  onSendToCursor?: () => void;
 }
 
 const CodePanel = (props: CodePanelProps) => {
@@ -36,6 +37,7 @@ const CodePanel = (props: CodePanelProps) => {
     selectedFramework,
     settings,
     onPreferenceChanged,
+    onSendToCursor,
   } = props;
   const isCodeEmpty = code === "";
 
@@ -139,11 +141,22 @@ const CodePanel = (props: CodePanelProps) => {
           Code
         </p>
         {!isCodeEmpty && (
-          <CopyButton
-            value={prefixedCode}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-          />
+          <div className="flex items-center gap-1">
+            {onSendToCursor && (
+              <button
+                onClick={onSendToCursor}
+                className="px-2 py-1.5 rounded-md text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                title="An Cursor senden"
+              >
+                Send to Cursor
+              </button>
+            )}
+            <CopyButton
+              value={prefixedCode}
+              onMouseEnter={handleButtonHover}
+              onMouseLeave={handleButtonLeave}
+            />
+          </div>
         )}
       </div>
 

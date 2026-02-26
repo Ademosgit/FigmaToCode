@@ -7,6 +7,7 @@ import {
   htmlMain,
   composeMain,
   postSettingsChanged,
+  convertToCode,
 } from "backend";
 import { nodesToJSON } from "backend/src/altNodes/jsonNodeConversion";
 import { retrieveGenericSolidUIColors } from "backend/src/common/retrieveUI/retrieveColors";
@@ -165,6 +166,50 @@ const standardMode = async () => {
       (userPluginSettings as any)[key] = value;
       figma.clientStorage.setAsync("userPluginSettings", userPluginSettings);
       safeRun(userPluginSettings);
+    } else if (msg.type === "send-to-cursor") {
+      console.log("[DEBUG] send-to-cursor message received");
+
+      const nodes = figma.currentPage.selection;
+      if (nodes.length === 0) {
+        figma.ui.postMessage({
+          type: "send-to-cursor-data",
+          error: "Keine Elemente ausgewählt",
+        });
+        return;
+      }
+
+      try {
+        const convertedSelection = await nodesToJSON(nodes, userPluginSettings);
+        const code = await convertToCode(convertedSelection, userPluginSettings);
+
+        const removeParent = (node: any) => {
+          if (node.parent) {
+            delete node.parent;
+          }
+          if (node.children) {
+            node.children.forEach(removeParent);
+          }
+        };
+        const figmaNodes = convertedSelection.map((n: any) => {
+          const copy = { ...n };
+          removeParent(copy);
+          return copy;
+        });
+
+        figma.ui.postMessage({
+          type: "send-to-cursor-data",
+          framework: userPluginSettings.framework,
+          code,
+          figmaNodes,
+          timestamp: Date.now(),
+        });
+      } catch (error) {
+        console.error("Error in send-to-cursor:", error);
+        figma.ui.postMessage({
+          type: "send-to-cursor-data",
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     } else if (msg.type === "get-selection-json") {
       console.log("[DEBUG] get-selection-json message received");
 

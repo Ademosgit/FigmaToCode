@@ -78,6 +78,19 @@ export type ErrorMessage = Message & {
   error: string;
 };
 
+export type SendToCursorRequestMessage = Message & {
+  type: "send-to-cursor";
+};
+
+export type SendToCursorDataMessage = Message & {
+  type: "send-to-cursor-data";
+  framework?: string;
+  code?: string;
+  figmaNodes?: unknown[];
+  timestamp?: number;
+  error?: string;
+};
+
 // Nodes
 export type ParentNode = BaseNode & ChildrenMixin;
 

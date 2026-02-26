@@ -47,6 +47,29 @@ Converting visual designs to code inevitably encounters complex edge cases. Here
 
 **Tip**: Instead of selecting the whole page, you can also select individual items. This can be useful for both debugging and componentization. For example: you can use the plugin to generate the code of a single element and then replicate it using a for-loop.
 
+## Cursor-Integration
+
+Das Plugin kann Designs direkt an Cursor senden, sodass die AI genau weiß, welches Figma-Element du implementieren möchtest.
+
+### Einrichtung
+
+1. **Debug-Server starten**: `pnpm dev` (startet den Next.js Debug-Server auf localhost:3000)
+2. **Optional – eigenes Projekt**: Um die Design-Daten in ein anderes Projekt zu schreiben, setze die Umgebungsvariable vor dem Start:
+   ```bash
+   FIGMA_TO_CODE_PROJECT_ROOT=/pfad/zu/deinem/projekt pnpm dev
+   ```
+   Ohne diese Variable wird in das Monorepo-Stammverzeichnis geschrieben.
+
+### Nutzung
+
+1. **In Figma**: Element auswählen → Figma-to-Code Plugin öffnen → neben dem Copy-Button auf **"Send to Cursor"** klicken
+2. **Speicherort**: Die Datei `.cursor/design-context.json` wird im Projektroot erstellt mit:
+   - `framework`: gewähltes Framework
+   - `code`: generierter Code
+   - `figmaNodes`: JSON-Struktur der konvertierten Nodes
+   - `timestamp`: Zeitstempel
+3. **In Cursor**: Nutze `@.cursor/design-context.json` im Chat als permanenten Kontext für Design-Anfragen
+
 ### Todo
 
 - Vectors (possible to enable in HTML and Tailwind)

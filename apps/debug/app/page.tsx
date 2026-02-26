@@ -40,6 +40,7 @@ export default function Web() {
                 colors={[]}
                 gradients={[]}
                 warnings={testWarnings}
+                onSendToCursor={() => {}}
               />
             </div>
           </div>
@@ -63,6 +64,7 @@ export default function Web() {
                 colors={[]}
                 gradients={[]}
                 warnings={testWarnings}
+                onSendToCursor={() => {}}
               />
             </div>
           </div>
