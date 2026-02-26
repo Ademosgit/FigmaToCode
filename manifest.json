@@ -9,8 +9,8 @@
   "permissions": [],
   "documentAccess": "dynamic-page",
   "networkAccess": {
-    "allowedDomains": ["127.0.0.1", "localhost"],
-    "reasoning": "Erforderlich für 'An Cursor senden' - kommuniziert mit der Cursor-Extension auf localhost"
+    "allowedDomains": ["http://127.0.0.1:3000", "http://localhost:3000"],
+    "reasoning": "Erforderlich für 'Send to Cursor' - kommuniziert mit dem Debug-Server auf localhost:3000"
   },
   "codegenLanguages": [
     { "label": "HTML", "value": "html" },
