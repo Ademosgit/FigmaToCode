@@ -11,8 +11,12 @@ import {
   ErrorMessage,
   SettingsChangedMessage,
   Warning,
+  SendToCursorDataMessage,
 } from "types";
-import { postUISettingsChangingMessage } from "./messaging";
+import {
+  postUISettingsChangingMessage,
+  postSendToCursorRequest,
+} from "./messaging";
 import copy from "copy-to-clipboard";
 
 interface AppState {
@@ -106,6 +110,37 @@ export default function App() {
         case "selection-json":
           const json = event.data.pluginMessage.data;
           copy(JSON.stringify(json, null, 2));
+          break;
+
+        case "send-to-cursor-data": {
+          const data = untypedMessage as SendToCursorDataMessage;
+          if (data.error) {
+            console.error("[send-to-cursor]", data.error);
+            break;
+          }
+          if (data.framework && data.code && data.figmaNodes !== undefined) {
+            fetch("http://127.0.0.1:3000/api/design-context", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                framework: data.framework,
+                code: data.code,
+                figmaNodes: data.figmaNodes,
+                timestamp: data.timestamp ?? Date.now(),
+              }),
+            })
+              .then((res) => res.json())
+              .then((result) => {
+                if (result.success) {
+                  console.log("[send-to-cursor] Gespeichert:", result.path);
+                } else {
+                  console.error("[send-to-cursor]", result.error);
+                }
+              })
+              .catch((err) => console.error("[send-to-cursor]", err));
+          }
+          break;
+        }
 
         default:
           break;
@@ -140,6 +175,10 @@ export default function App() {
     }
   };
 
+  const handleSendToCursor = () => {
+    postSendToCursorRequest({ targetOrigin: "*" });
+  };
+
   const darkMode = figmaColorBgValue !== "#ffffff";
 
   return (
@@ -155,6 +194,7 @@ export default function App() {
         settings={state.settings}
         colors={state.colors}
         gradients={state.gradients}
+        onSendToCursor={handleSendToCursor}
       />
     </div>
   );

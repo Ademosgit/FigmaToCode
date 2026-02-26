@@ -23,3 +23,9 @@ export const postUISettingsChangingMessage = <T>(
   };
   postUIMessage(message, options);
 };
+
+export const postSendToCursorRequest = (
+  options?: WindowPostMessageOptions,
+) => {
+  postUIMessage({ type: "send-to-cursor" }, options);
+};

@@ -29,3 +29,6 @@ test/**/next-env.d.ts
 
 build
 .turbo
+
+# Figma-to-Code: generierter Design-Kontext für Cursor
+.cursor/design-context.json
